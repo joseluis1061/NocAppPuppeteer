@@ -1,6 +1,8 @@
 const path = require('path');
+const fs = require('fs');
 
 const puppeteer = require('puppeteer');
+//const puppeteerCore = require('puppeteer-core');
 const URL2020 = "https://10.28.144.135:31943/unisso/login.action?service=%2Funisess%2Fv1%2Fauth%3Fservice%3D%252Fossfacewebsite%252Findex.html%2523Access%252FfmAlarmView&decision=1";
 const alarmLog = "https://10.28.144.135:31943/ossfacewebsite/index.html#Access/fmAlarmLog";
 const USERU2020 = "dchocuec";
@@ -14,18 +16,56 @@ function timeout(ms) {
 const scrapingU2020 = async () => {
   //Opciones de navegación
   const browser = await puppeteer.launch({
-    headless: false,  // devtools por defecto es false, si es true no abre el navegador
-    slowMo: 0,        // Para hacer la carga mas lenta de una web y evitar ser detectados
-    devtools: false,  // Para que se abran las herramientas del navegador
+    //executablePath:'C:\Program Files\Google\Chrome\Application\chrome.exe', //Permite usar el navegador para hacer el lunch
+    headless: false,                    // Opción para ocultar la ventana del navegador
+    slowMo: 0,                          // Opción para cargar lentamente la ventana
+    devtools: false,                    // Opción para abrir las herramientas del navegador
     args: [
         '--ignore-certificate-errors',        
         '--start-maximized',
         //'--start-fullscreen'
+        '--disable-gpu',                // Deshabilitar la aceleración por hardware
+        '--disable-dev-shm-usage',      // Deshabilitar el uso de la memoria compartida /dev/shm
+        '--disable-setuid-sandbox',     // Deshabilitar el uso de un sandbox para el usuario
+        '--no-sandbox',                  // Deshabilitar el sandbox del sistema operativo
+
+        /*
+        '--remote-debugging-port=9222',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process'
+        */
     ],
   });
 
   //Inicio de la navegación
   const page = await browser.newPage();
+
+  //////////////////
+  /*
+  const browser = await puppeteerCore.connect({
+    browserURL: 'http://localhost:4468',
+    headless: true,                    // Opción para ocultar la ventana del navegador
+    slowMo: 0,                          // Opción para cargar lentamente la ventana
+    devtools: false,                    // Opción para abrir las herramientas del navegador
+    args: [
+        '--ignore-certificate-errors',        
+        '--start-maximized',
+        //'--start-fullscreen'
+        '--disable-gpu',                // Deshabilitar la aceleración por hardware
+        '--disable-dev-shm-usage',      // Deshabilitar el uso de la memoria compartida /dev/shm
+        '--disable-setuid-sandbox',     // Deshabilitar el uso de un sandbox para el usuario
+        '--no-sandbox'                  // Deshabilitar el sandbox del sistema operativo
+    ],
+  });
+
+  const pages = await browser.pages();
+  console.log(pages)
+  const page = pages[0];
+  */
+  ////////////////
+
+
   try{
     await page.setViewport({ width: 0, height: 0});
     await page.goto(URL2020, {waitUntil:'networkidle0'}); // Ir a la pagina y esperar a que este completamente cargada
@@ -80,15 +120,15 @@ const scrapingU2020 = async () => {
     const warningXpath = '//*[@id="fm_btn_alarmWarning"]';
     const okXpath = '//*[@id="fm_btn_filter"]';
   
-    const major = await frameAlarmas.waitForSelector('xpath/' + majorXpath, {visible: true});
+    const major = await frameAlarmas.waitForSelector('xpath/' + majorXpath);
     await timeout(3000);
     await major.click();
   
-    const minor = await frameAlarmas.waitForSelector('xpath/' + minorXpath, {visible: true});
+    const minor = await frameAlarmas.waitForSelector('xpath/' + minorXpath);
     await timeout(3000);
     await minor.click();
   
-    const warning = await frameAlarmas.waitForSelector('xpath/' + warningXpath, {visible: true});
+    const warning = await frameAlarmas.waitForSelector('xpath/' + warningXpath);
     await timeout(3000);
     await warning.click();
   

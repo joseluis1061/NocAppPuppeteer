@@ -1,6 +1,6 @@
 import './App.css';
 import Layout from './Layout/Layout';
-import { HashRouter, BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import Alarmas from './pages/Alarmas';
 import Analisis from './pages/Analisis';
 import Sitios from './pages/Sitios';
