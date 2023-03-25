@@ -1,0 +1,35 @@
+.Analisis{
+}
+form{
+  background-color: var(--gris);
+  max-width: 400px;
+  margin: 0 auto;
+  border-radius: 10px;
+  padding: 15px;
+}
+fieldset{
+  border: none;
+}
+
+legend{
+  font-weight: bold;
+}
+.campo{
+  display: flex;
+  width: 100%;
+  margin-bottom: 15px;
+}
+.campo label{
+  width: 40%;
+  font-weight: bold;
+}
+.campo input{
+  width: 60%;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+}
+.btn-enviar{
+  width: 100%;
+  background-color: white;
+}
