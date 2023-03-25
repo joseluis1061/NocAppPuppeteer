@@ -8,11 +8,6 @@
 /.pnp
 .pnp.js
 
-# Excel
-/00_inputs
-/01_Output
-
-
 # testing
 /coverage
 
