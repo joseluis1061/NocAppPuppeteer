@@ -6,7 +6,7 @@ const puppeteer = require('puppeteer');
 const URL2020 = "https://10.28.144.135:31943/unisso/login.action?service=%2Funisess%2Fv1%2Fauth%3Fservice%3D%252Fossfacewebsite%252Findex.html%2523Access%252FfmAlarmView&decision=1";
 const alarmLog = "https://10.28.144.135:31943/ossfacewebsite/index.html#Access/fmAlarmLog";
 const USERU2020 = "dchocuec";
-const CONTRASENIAU2020 = "IOTlatam2023COL**";
+const CONTRASENIAU2020 = "IOTlatamPop2023**";
 
 function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
