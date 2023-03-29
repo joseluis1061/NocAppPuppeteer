@@ -2,10 +2,15 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
 
+const handleDirectories = require('./handleDirectories');
+
+
 const urlTowerOne = "http://190.145.9.251:5011/";
 const urlImplementacion = "http://190.145.9.251:5011/implementation";
 const userTowerOne = "m.roman@toweronewireless.com";
 const passTowerOne = "Zz-Qy0Q8";
+
+
 
 const dirDownload = path.join(__dirname, './/00_Inputs//');
 
@@ -14,18 +19,18 @@ function timeout(ms) {
 }
 
 
-function createDirectotyOutput(){
-  if (fs.existsSync(dirDownload)){
-    console.log('El directorio existe')
-  }else{
-    fs.mkdir(dirDownload, (error)=>{
-      if(error){
-        console.log('Error 00_Inputs', error);
-      }
-      console.log('00_Inputs Success');
-    })
-  }
-}
+// function createDirectotyOutput(){
+//   if (fs.existsSync(dirDownload)){
+//     console.log('El directorio existe')
+//   }else{
+//     fs.mkdir(dirDownload, (error)=>{
+//       if(error){
+//         console.log('Error 00_Inputs', error);
+//       }
+//       console.log('00_Inputs Success');
+//     })
+//   }
+// }
 
 function changeNameFile(name_file){
   if (name_file) {
@@ -70,8 +75,8 @@ function changeNameFile(name_file){
 }
 
 const scrapingTowerOne = async () => {
-  createDirectotyOutput()
-  console.log("dirDownload", dirDownload);
+  handleDirectories.createDirectotyOutput(dirDownload);
+  console.log("dirDownload -->", dirDownload);
 
   //Opciones de navegación
   const browser = await puppeteer.launch({
@@ -84,14 +89,11 @@ const scrapingTowerOne = async () => {
         //'--start-fullscreen'
     ],
   });
-
   
   //Inicio de la navegación
   const page = await browser.newPage();
 
-
-// Descarga a un path especifico
-      
+  // Descarga a un path especifico
   const client = await page.target().createCDPSession();
   await client .send('Page.setDownloadBehavior', {
     behavior: 'allow',
@@ -108,7 +110,6 @@ const scrapingTowerOne = async () => {
     await browser.close();
   }
   timeout(5000);
-
 
   // Logeo
   try{
@@ -127,12 +128,10 @@ const scrapingTowerOne = async () => {
   }
 
   // Cambio a la pagina de Implementación
-
   try{
     await page.goto(urlImplementacion, {waitUntil:'networkidle0'}) 
     timeout(2000);
     // await page.screenshot({path: 'NuevaUrlTowerOne.jpg'}); // Captura de la pantalla
-
   }catch{
     console.log("Falla cambio de ventana");
     await browser.close();
@@ -168,9 +167,11 @@ const scrapingTowerOne = async () => {
 
     do {
       timeout(2000);
+      console.log("file_list_old ", file_list_old);
       file_list_new = fs.readdirSync(dirDownload).filter(file => {
         return file.startsWith('Sitios_Implementacion_TowerTrack');
       });
+      console.log("file_list_new ", file_list_new);
     } while (file_list_new.length === file_list_old.length);
     
   }
