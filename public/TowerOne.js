@@ -1,16 +1,13 @@
 const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
-
 const handleDirectories = require('./handleDirectories');
-
+// const {} = require('./handleDirectories');
 
 const urlTowerOne = "http://190.145.9.251:5011/";
 const urlImplementacion = "http://190.145.9.251:5011/implementation";
 const userTowerOne = "m.roman@toweronewireless.com";
 const passTowerOne = "Zz-Qy0Q8";
-
-
 
 const dirDownload = path.join(__dirname, './/00_Inputs//');
 
@@ -18,78 +15,21 @@ function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-
-// function createDirectotyOutput(){
-//   if (fs.existsSync(dirDownload)){
-//     console.log('El directorio existe')
-//   }else{
-//     fs.mkdir(dirDownload, (error)=>{
-//       if(error){
-//         console.log('Error 00_Inputs', error);
-//       }
-//       console.log('00_Inputs Success');
-//     })
-//   }
-// }
-
-function changeNameFile(name_file){
-  if (name_file) {
-    let file_list = fs.readdirSync(dirDownload).filter(file => {
-      return file.startsWith(name_file);
-    });
-
-    // Eliminar los archivos antiguos
-    if(file_list.length > 1){
-      for (var i = 0; i < file_list.length-1; i++) {
-        let file1 = file_list[i];
-        let file2 = file_list[i+1];
-  
-        const stats1 = fs.statSync(dirDownload+"/"+file1);
-        const stats2 = fs.statSync(dirDownload+"/"+file2);
-  
-        const file_t1 = stats1.mtime;
-        const file_t2 = stats2.mtime;
-  
-        if(file_t1>=file_t2){
-          fs.unlinkSync( dirDownload+"/"+file2)
-        }
-        else if(file_t1<file_t2){
-          fs.unlinkSync( dirDownload+"/"+file1)
-        }
-      }
-    }
-
-    // Cambiar el nombre del archivo
-    file_list = fs.readdirSync(dirDownload).filter(file => {
-      return file.startsWith(name_file);
-    });
-
-    if (file_list.length === 1){
-      fs.renameSync(dirDownload+file_list[0], dirDownload+name_file+".xlsx");
-      return console.log('Cambio de nombre hecho')
-    }
-    else{
-      console.log('Falla en renombrar los archivos')
-    }
-  }
-}
-
 const scrapingTowerOne = async () => {
+  // Crea el directorio de salida del archivo
   handleDirectories.createDirectotyOutput(dirDownload);
-  console.log("dirDownload -->", dirDownload);
-
   //Opciones de navegación
   const browser = await puppeteer.launch({
     headless: false,  // devtools por defecto es false, si es true no abre el navegador
     slowMo: 0,        // Para hacer la carga mas lenta de una web y evitar ser detectados
     devtools: false,  // Para que se abran las herramientas del navegador
     args: [
-        '--ignore-certificate-errors',        
+        '--ignore-certificate-errors',
         '--start-maximized',
         //'--start-fullscreen'
     ],
   });
-  
+
   //Inicio de la navegación
   const page = await browser.newPage();
 
@@ -129,7 +69,7 @@ const scrapingTowerOne = async () => {
 
   // Cambio a la pagina de Implementación
   try{
-    await page.goto(urlImplementacion, {waitUntil:'networkidle0'}) 
+    await page.goto(urlImplementacion, {waitUntil:'networkidle0'})
     timeout(2000);
     // await page.screenshot({path: 'NuevaUrlTowerOne.jpg'}); // Captura de la pantalla
   }catch{
@@ -167,13 +107,11 @@ const scrapingTowerOne = async () => {
 
     do {
       timeout(2000);
-      console.log("file_list_old ", file_list_old);
       file_list_new = fs.readdirSync(dirDownload).filter(file => {
         return file.startsWith('Sitios_Implementacion_TowerTrack');
       });
-      console.log("file_list_new ", file_list_new);
     } while (file_list_new.length === file_list_old.length);
-    
+
   }
   catch{
     console.log('Falla botón OK');
@@ -182,7 +120,7 @@ const scrapingTowerOne = async () => {
   await page.waitForTimeout(15000);
 
   // Eliminar las copias y renombrar a un solo archivo
-  changeNameFile('Sitios_Implementacion_TowerTrack');
+  handleDirectories.changeNameFile('Sitios_Implementacion_TowerTrack', dirDownload);
   await page.waitForTimeout(5000);
   // Cerrar el Browser y el programa
   await browser.close();

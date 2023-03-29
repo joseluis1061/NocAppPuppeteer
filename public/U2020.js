@@ -1,7 +1,8 @@
+const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
+const handleDirectories = require('./handleDirectories');
 
-const puppeteer = require('puppeteer');
 //const puppeteerCore = require('puppeteer-core');
 const URL2020 = "https://10.28.144.135:31943/unisso/login.action?service=%2Funisess%2Fv1%2Fauth%3Fservice%3D%252Fossfacewebsite%252Findex.html%2523Access%252FfmAlarmView&decision=1";
 const alarmLog = "https://10.28.144.135:31943/ossfacewebsite/index.html#Access/fmAlarmLog";
