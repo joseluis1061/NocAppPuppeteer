@@ -312,9 +312,9 @@ const Sitios = () => {
               {/* Actualizar Datos de sitio */}
               Actualizar Sitios
           </button>}
-          <button className='btn btn-datos-tower'>
+          {/* <button className='btn btn-datos-tower'>
             Actualizar Tower Track
-          </button>
+          </button> */}
         </div>
 
         <div className='campo-download'>

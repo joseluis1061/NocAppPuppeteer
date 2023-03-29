@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
+const isDev = require('electron-is-dev');
 const handleDirectories = require('./handleDirectories');
 
 //const puppeteerCore = require('puppeteer-core');
@@ -9,7 +10,10 @@ const alarmLog = "https://10.28.144.135:31943/ossfacewebsite/index.html#Access/f
 const USERU2020 = "dchocuec";
 const CONTRASENIAU2020 = "IOTlatamPop2023**";
 
-const dirDownload = path.join(__dirname, './/00_Inputs//');
+let dirDownload = "";
+isDev
+  ? dirDownload = path.join(__dirname, './/00_Inputs//')
+  : dirDownload = path.join(__dirname, '..//..//00_Inputs//')
 
 function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));

@@ -1,15 +1,19 @@
 const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
+const isDev = require('electron-is-dev');
+
 const handleDirectories = require('./handleDirectories');
-// const {} = require('./handleDirectories');
 
 const urlTowerOne = "http://190.145.9.251:5011/";
 const urlImplementacion = "http://190.145.9.251:5011/implementation";
 const userTowerOne = "m.roman@toweronewireless.com";
 const passTowerOne = "Zz-Qy0Q8";
 
-const dirDownload = path.join(__dirname, './/00_Inputs//');
+let dirDownload = "";
+isDev
+  ? dirDownload = path.join(__dirname, './/00_Inputs//')
+  : dirDownload = path.join(__dirname, '..//..//00_Inputs//')
 
 function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));

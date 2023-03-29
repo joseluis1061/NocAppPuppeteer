@@ -11,9 +11,10 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
 
 let win;
-const dirOutputsFilter = path.join(__dirname, './/01_Output//');
-
-
+let dirOutputsFilter = "";
+isDev
+  ? dirOutputsFilter = path.join(__dirname, './/01_Output//')
+  : dirOutputsFilter = path.join(__dirname, '..//..//01_Output//');
 
 function createWindow() {
   // Create the browser window.
@@ -46,7 +47,8 @@ app.whenReady().then(() =>{
   createWindow();
   win.maximize();
   win.show();
-  handleDirectories.createDirectotyOutput(dirOutputsFilter);
+  //handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
+  //handleDirectories.createDirectotyOutput(dirOutputsFilter);
 });
 
 app.on('window-all-closed', () => {
@@ -98,9 +100,7 @@ cron.schedule("*/7 * * * *", () => {
   console.log('Every 7 min... ', new Date())
   async function ejecutarU2020(){
     await U20220.scrapingU2020();
-    filteredData();
-    handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
-
+    //filteredData();
   }
   ejecutarU2020();
 });
@@ -110,8 +110,7 @@ cron.schedule("0 */1 * * *", () => {
   console.log('Every 1 hour... ', new Date())
   async function ejecutarTowerOne(){
     await TowerOne.scrapingTowerOne();;
-    filteredData();
-    handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
+    //filteredData();
   }
   ejecutarTowerOne();
 });
@@ -146,8 +145,7 @@ ipcMain.on('ping', (event, arg) => {
   async function ejecutarTodoScraping() {
     await U20220.scrapingU2020();
     await TowerOne.scrapingTowerOne();
-    filteredData();
-    handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
+    //filteredData();
   }
   ejecutarTodoScraping()
 })
