@@ -9,12 +9,15 @@ const alarmLog = "https://10.28.144.135:31943/ossfacewebsite/index.html#Access/f
 const USERU2020 = "dchocuec";
 const CONTRASENIAU2020 = "IOTlatamPop2023**";
 
+const dirDownload = path.join(__dirname, './/00_Inputs//');
+
 function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-
 const scrapingU2020 = async () => {
+  // Crea el directorio de salida del archivo
+  handleDirectories.createDirectotyOutput(dirDownload);
   //Opciones de navegación
   const browser = await puppeteer.launch({
     //executablePath:'C:\Program Files\Google\Chrome\Application\chrome.exe', //Permite usar el navegador para hacer el lunch
@@ -41,6 +44,14 @@ const scrapingU2020 = async () => {
 
   //Inicio de la navegación
   const page = await browser.newPage();
+
+  // Descarga a un path especifico
+  const client = await page.target().createCDPSession();
+  await client .send('Page.setDownloadBehavior', {
+    behavior: 'allow',
+    downloadPath: dirDownload,
+    windowState: 'minimized'
+  });
 
   //////////////////
   /*
@@ -161,7 +172,7 @@ const scrapingU2020 = async () => {
     const containerXpat = '//*[@id="dialog_panel"]';
     const container_select = await frameAlarmas.waitForSelector('xpath/' + containerXpat, {visible: true});
     const xlsxXpat = '//*[@id="dialog_panel"]/div[@class="eui_Dialog_PanelContent"]/div[@class="eui_radio_group "]//div[@class="eui_radio_container "]//div[@id="eui_radio_group_10001_radio_1"]/div//span[@class="eui_radio_span "]';
-    const btn_xlsx = await await frameAlarmas.waitForSelector('xpath/' + xlsxXpat, {visible: true});
+    const btn_xlsx = await frameAlarmas.waitForSelector('xpath/' + xlsxXpat, {visible: true});
     await timeout(3000);
     btn_xlsx.click();
   }catch{
@@ -171,18 +182,45 @@ const scrapingU2020 = async () => {
 
   // Descarga y espera del documento
   try{
+    // Método dinamico para esperar que se descargue el elemento
+    const file_list_old =  fs.readdirSync(dirDownload).filter(file => {
+      return file.startsWith('AlarmLogs');
+    });
     const ok2 = '//*[@id="dialog_panel"]/div[@class="eui_Dialog_ButtonArea"]/button[@id="confirmBtn"]'
-    const btn_ok2 = await await frameAlarmas.waitForSelector('xpath/' + ok2, {visible: true});
+    const btn_ok2 = await frameAlarmas.waitForSelector('xpath/' + ok2, {visible: true});
     await timeout(3000);
-    btn_ok2.click();
-    await timeout(25000);
+    try{
+      await btn_ok2.evaluate(btn_ok2=> btn_ok2.click());
+    }catch{
+      console.log("Falla btn_ok2");
+      await browser.close();
+    }
+    //btn_ok2.click();
+    let file_list_new = fs.readdirSync(dirDownload).filter(file => {
+      return file.startsWith('AlarmLogs');
+    });
+    timeout(5000);
+
+    do {
+      timeout(15000);
+      file_list_new = fs.readdirSync(dirDownload).filter(file => {
+        return file.startsWith('AlarmLogs');
+      });
+    } while (file_list_new.length === file_list_old.length);
+    
+    await timeout(5000);
   }catch{
     console.log("Falla en secuencia de descarga del documento");
     await browser.close();
   }
 
-  //await page.waitForTimeout(5000);    // Función deprecada para dar tiempos de espera
+  // Eliminar las copias y renombrar a un solo archivo
+  handleDirectories.changeNameFile('AlarmLogs', dirDownload);
+
+  // Cierre del navegador
+  await page.waitForTimeout(2000);    // Función deprecada para dar tiempos de espera
   await browser.close();
+  
+  return "success U2020"
 };
-//scrapingU2020();
 module.exports = { scrapingU2020:scrapingU2020 };

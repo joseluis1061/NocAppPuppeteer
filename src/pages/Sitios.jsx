@@ -77,7 +77,7 @@ const Sitios = () => {
   //     console.log(err);
   //   }
   // }
-  const requestHandleRutaDondeEstoy= async() => {
+  const handleUpdateScraping= async() => {
     const rendererProcess = window.rendererProcess;
     rendererProcess.encontrarRutas();
   }
@@ -303,13 +303,14 @@ const Sitios = () => {
         onRowDoubleClicked = {dobleClickUpdateHandler}
         selectableRows = {true}
         selectableRowsHighlight = {true}
+        search
       />
       <nav className='sitios-menu'>
         <div className='campo-download'>          
 
-          {<button className='btn btn-datos-sitio' onClick={()=>requestHandleRutaDondeEstoy()}>
+          {<button className='btn btn-datos-sitio' onClick={()=>handleUpdateScraping()}>
               {/* Actualizar Datos de sitio */}
-              Rutas
+              Actualizar Sitios
           </button>}
           <button className='btn btn-datos-tower'>
             Actualizar Tower Track

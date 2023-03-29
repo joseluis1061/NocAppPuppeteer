@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const handleDirectories = require('./handleDirectories');
 const {execSync} = require('child_process');
 /*** Cambiar a bridge ***/
 const cron = require("node-cron");
@@ -10,6 +11,9 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
 
 let win;
+const dirOutputsFilter = path.join(__dirname, './/01_Output//');
+
+
 
 function createWindow() {
   // Create the browser window.
@@ -29,7 +33,6 @@ function createWindow() {
     isDev
       ? 'http://localhost:3000/'
       : `file://${path.join(__dirname, '../build/index.html')}`
-      //: file://${__dirname}/../build/index.html);
   );
   // Open the DevTools.
   if (isDev) {
@@ -43,6 +46,7 @@ app.whenReady().then(() =>{
   createWindow();
   win.maximize();
   win.show();
+  handleDirectories.createDirectotyOutput(dirOutputsFilter);
 });
 
 app.on('window-all-closed', () => {
@@ -92,13 +96,24 @@ function filteredData() {
 
 cron.schedule("*/7 * * * *", () => {
   console.log('Every 7 min... ', new Date())
-  U20220.scrapingU2020();
-  filteredData();
+  async function ejecutarU2020(){
+    await U20220.scrapingU2020();
+    filteredData();
+    handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
+
+  }
+  ejecutarU2020();
 });
+
 // 0 */1 * * * Cada 1 hora
 cron.schedule("0 */1 * * *", () => {
   console.log('Every 1 hour... ', new Date())
-  TowerOne.scrapingTowerOne();
+  async function ejecutarTowerOne(){
+    await TowerOne.scrapingTowerOne();;
+    filteredData();
+    handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
+  }
+  ejecutarTowerOne();
 });
 
 
@@ -128,7 +143,11 @@ ipcMain.on('ping', (event, arg) => {
   //path.join(__dirname, './executableFiltered/filterDataSite.exe')
   //console.log(__dirname, '\\executableFiltered\\filterDataSite.exe')
   console.log("rutaTotal ", rutaTotal)
-  filteredData();
-  //U20220.scrapingU2020();
-  TowerOne.scrapingTowerOne();
+  async function ejecutarTodoScraping() {
+    await U20220.scrapingU2020();
+    await TowerOne.scrapingTowerOne();
+    filteredData();
+    handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
+  }
+  ejecutarTodoScraping()
 })

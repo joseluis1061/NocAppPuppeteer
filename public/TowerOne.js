@@ -38,6 +38,7 @@ const scrapingTowerOne = async () => {
   await client .send('Page.setDownloadBehavior', {
     behavior: 'allow',
     downloadPath: dirDownload,
+    windowState: 'minimized'
   });
 
   //await page._client().send("Page.setDownloadBehavior", { behavior: "allow", downloadPath: dirDownload, });
@@ -99,6 +100,12 @@ const scrapingTowerOne = async () => {
     const btn_modal = await page.waitForXPath(modal, {visible: true});
     timeout(2000);
     btn_modal.click();
+    try{
+      await btn_modal.evaluate(btn_modal=> btn_modal.click());
+    }catch{
+      console.log("Falla btn_ok2");
+      await browser.close();
+    }
 
     let file_list_new = fs.readdirSync(dirDownload).filter(file => {
       return file.startsWith('Sitios_Implementacion_TowerTrack');
@@ -124,5 +131,7 @@ const scrapingTowerOne = async () => {
   await page.waitForTimeout(5000);
   // Cerrar el Browser y el programa
   await browser.close();
+  
+  return "success TowerOne"
 };
 module.exports = { scrapingTowerOne:scrapingTowerOne };
