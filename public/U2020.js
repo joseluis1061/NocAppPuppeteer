@@ -43,6 +43,16 @@ const scrapingU2020 = async () => {
         '--no-zygote',
         '--single-process'
         */
+        /*
+        '--disable-extensions', 
+        '--disable-plugins', 
+        '--disable-notifications', 
+        '--disable-popup-blocking', 
+        '--disable-default-apps', 
+        '--disable-infobars', 
+        '--allow-file-access-from-files', 
+        '--disable-web-security', 
+        */
     ],
   });
 
@@ -53,9 +63,9 @@ const scrapingU2020 = async () => {
   const client = await page.target().createCDPSession();
   await client .send('Page.setDownloadBehavior', {
     behavior: 'allow',
-    downloadPath: dirDownload,
-    windowState: 'minimized'
+    downloadPath: dirDownload
   });
+  
 
   //////////////////
   /*

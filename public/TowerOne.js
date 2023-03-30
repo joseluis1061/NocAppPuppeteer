@@ -30,7 +30,20 @@ const scrapingTowerOne = async () => {
     args: [
         '--ignore-certificate-errors',
         '--start-maximized',
-        //'--start-fullscreen'
+        //'--start-fullscreen',
+
+        /*
+        '--disable-extensions', 
+        '--disable-plugins', 
+        '--disable-notifications', 
+        '--disable-popup-blocking', 
+        '--disable-default-apps', 
+        '--disable-infobars', 
+        '--no-sandbox', 
+        '--allow-file-access-from-files', 
+        '--disable-web-security', 
+        '--disable-gpu'
+        */
     ],
   });
 
@@ -42,10 +55,8 @@ const scrapingTowerOne = async () => {
   await client .send('Page.setDownloadBehavior', {
     behavior: 'allow',
     downloadPath: dirDownload,
-    windowState: 'minimized'
   });
 
-  //await page._client().send("Page.setDownloadBehavior", { behavior: "allow", downloadPath: dirDownload, });
 
   try{
     await page.setViewport({ width: 0, height: 0});

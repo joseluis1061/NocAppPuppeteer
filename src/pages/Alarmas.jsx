@@ -3,7 +3,7 @@ import AppContext from '../context/AppContext';
 import DataTable from 'react-data-table-component';
 import '../styles/Alarmas.css';
 import axios from 'axios';
-
+import data from '..//..//..//LogAlarmasRADII.json'
 
 const Alarmas = () => {
   const {postData} = useContext(AppContext);
@@ -15,7 +15,9 @@ const Alarmas = () => {
  
   // Actualizar la tablero con JSON
   const getDataJson= async() => {
-    const urlApi = "LogAlarmasRADII.json";
+    
+    const urlApi = "LogAlarmasRADII.json"; // Para leer archivos en la carpeta public
+    //const urlApi = "..//..//..//01_Output//LogAlarmasRADII.json";  // Para leer archivos en producción
     //console.log(await loadJsonFile('raddII.json'));
     try{
       const response = await axios.get(urlApi);
@@ -25,6 +27,7 @@ const Alarmas = () => {
      }catch(err){
       console.log("Falla en radd.json", err);
     }
+
   }
 
   useEffect(()=>{

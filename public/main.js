@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const handleDirectories = require('./handleDirectories');
-const {execSync} = require('child_process');
+const getJsonData = require('./getJsonData');
 /*** Cambiar a bridge ***/
 const cron = require("node-cron");
 const {shell} = require('electron');
@@ -47,8 +47,7 @@ app.whenReady().then(() =>{
   createWindow();
   win.maximize();
   win.show();
-  //handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
-  //handleDirectories.createDirectotyOutput(dirOutputsFilter);
+  handleDirectories.createDirectotyOutput(dirOutputsFilter);
 });
 
 app.on('window-all-closed', () => {
@@ -69,7 +68,10 @@ const { spawn } = require('child_process');
 
 /***** Filtered ********/
 let directory = __dirname;
-let executableFiltered = "aset\\EjecutableFiltered\\dist\\filterDataSite.exe";
+let executableFiltered = "";
+isDev
+  ? executableFiltered = "aset\\EjecutableFiltered\\dist\\filterDataSite.exe"
+  : executableFiltered = "\\EjecutableFiltered\\dist\\filterDataSite.exe"
 
 function filteredData() {
   //const child = spawn('start',[__dirname+executableFiltered+'filterDataSite.exe'], 'with space', { shell: true })
@@ -100,9 +102,9 @@ cron.schedule("*/7 * * * *", () => {
   console.log('Every 7 min... ', new Date())
   async function ejecutarU2020(){
     await U20220.scrapingU2020();
-    //filteredData();
+    filteredData();
+    handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
   }
-  ejecutarU2020();
 });
 
 // 0 */1 * * * Cada 1 hora
@@ -110,9 +112,9 @@ cron.schedule("0 */1 * * *", () => {
   console.log('Every 1 hour... ', new Date())
   async function ejecutarTowerOne(){
     await TowerOne.scrapingTowerOne();;
-    //filteredData();
+    filteredData();
+    handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
   }
-  ejecutarTowerOne();
 });
 
 
@@ -136,7 +138,8 @@ ipcMain.on('ping', (event, arg) => {
   event.sender.send('pong', {
     "rutaActual": rutaActual,
     "file_list": file_list,
-    "rutaTotal": rutaTotal
+    "rutaTotal": rutaTotal,
+    "executableFiltered": executableFiltered
     // "aset": aset.length > 0 ? aset : "No file aset" 
   })
   //path.join(__dirname, './executableFiltered/filterDataSite.exe')
@@ -145,7 +148,17 @@ ipcMain.on('ping', (event, arg) => {
   async function ejecutarTodoScraping() {
     await U20220.scrapingU2020();
     await TowerOne.scrapingTowerOne();
-    //filteredData();
+    filteredData();
+    handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
   }
   ejecutarTodoScraping()
-})
+});
+
+ipcMain.on('getDataJsonApiSitios', (event, arg) => {
+  console.log("..//..//"+arg);
+  //getJsonData.getJsonData("..//..//"+arg);
+
+  //event.sender.send('setDataJsonApiSitios', {});
+  //mainWindow.webContents.send('setDataJsonApi', jsonData);
+
+});

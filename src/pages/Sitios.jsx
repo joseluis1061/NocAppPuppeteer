@@ -21,7 +21,8 @@ const Sitios = () => {
 
   // Detectar sitios nuevos en JSON
   const getDataJson= async() => {
-    const urlApi = "raddII.json";
+    //const urlApi = "..//..//..//01_Output//raddII.json";  // Para leer archivos en producción
+    const urlApi = "raddII.json";  //Para leer el archivo desde la carpeta public
     //console.log(await loadJsonFile('raddII.json'));
     try{
       const response = await axios.get(urlApi);

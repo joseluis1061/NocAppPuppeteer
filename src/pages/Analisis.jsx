@@ -168,7 +168,8 @@ const Analisis = () => {
 
   // Actualizar la tablero con JSON
   const getDataJson= async() => {
-    const urlApi = "AnalisisAlarmas.json";
+    //const urlApi = "..//..//..//01_Output//AnalisisAlarmas.json";  // Para leer archivos en producción
+    const urlApi = "AnalisisAlarmas.json"; //Para leer el archivo desde la carpeta public
     //console.log(await loadJsonFile('raddII.json'));
     try{
       const response = await axios.get(urlApi);
