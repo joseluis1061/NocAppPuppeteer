@@ -24,8 +24,8 @@ const Sitios = () => {
   // Detectar sitios nuevos en JSON
   const getDataJson= async() => {
     try{
-      const json = await rendererProcess.getDataJsonElectron("raddII.json")
-      const data = JSON.parse(json)
+      const json = await rendererProcess.getDataJsonElectron("raddII.json");
+      const data = JSON.parse(json);
       const sitiosNuevosFiltrados = detectedSiteNew(data);
       setSitioJson(sitiosNuevosFiltrados);
     }catch(err){

@@ -1,8 +1,9 @@
 import React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import DataTable from 'react-data-table-component';
-import axios from 'axios';
 import '../styles/Analisis.css';
+const rendererProcess = window.rendererProcess;
+
 
 //Columnas de la tabla
 
@@ -168,6 +169,7 @@ const Analisis = () => {
 
   // Actualizar la tablero con JSON
   const getDataJson= async() => {
+    /*
     //const urlApi = "..//..//..//01_Output//AnalisisAlarmas.json";  // Para leer archivos en producción
     const urlApi = "AnalisisAlarmas.json"; //Para leer el archivo desde la carpeta public
     //console.log(await loadJsonFile('raddII.json'));
@@ -182,6 +184,16 @@ const Analisis = () => {
     }catch(err){
       console.log(err);
     }
+    */
+    try{
+      const json = await rendererProcess.getDataJsonElectron("AnalisisAlarmas.json");
+      const data = JSON.parse(json);
+      setAnalisis(data);
+    }catch(err){
+      console.log("Falla en radd.json", err);
+    }
+
+
   }
 
   useEffect(()=>{
