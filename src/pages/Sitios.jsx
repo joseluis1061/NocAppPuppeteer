@@ -7,7 +7,6 @@ import '../styles/Sitios.css';
 import axios from 'axios';
 const rendererProcess = window.rendererProcess;
 
-
 const Sitios = () => {
   const {postData} = useContext(AppContext);
   const [sitios, setSitios] = useState([]);             // Sitios cargados desde la api o desde el JSON
@@ -24,39 +23,8 @@ const Sitios = () => {
 
   // Detectar sitios nuevos en JSON
   const getDataJson= async() => {
-    /*
-    //const urlApi = "..//..//..//01_Output//raddII.json";  // Para leer archivos en producción
-    const urlApi = "raddII.json";  //Para leer el archivo desde la carpeta public
-    //console.log(await loadJsonFile('raddII.json'));
     try{
-      const response = await axios.get(urlApi);
-      const json = response.data;
-      const data = JSON.parse(json)
-      //setSitios(data);
-      const sitiosNuevosFiltrados = detectedSiteNew(data)
-      setSitioJson(sitiosNuevosFiltrados);
-      //detectedSiteNew(data);
-      //console.log(`Sitios JSON = ${sitiosJson.length} Sitios = ${sitios.length}`);
-    }catch(err){
-      console.log("Falla en radd.json", err);
-    }
-    */
-   /*
-    try{
-      const json = rendererProcess.getDataJsonElectron("raddII.json");
-      console.log("JSON RENDER:- ", json)
-      // console.log("json ==", sitiosJsonNode)
-      // //const data = JSON.parse(json)
-      // console.log('SITIOS NODE')
-      // sitiosJsonNode.map(sitio => {console.log(sitio)})
-      // const sitiosNuevosFiltrados = detectedSiteNew(sitiosJsonNode);
-      // setSitioJson(sitiosNuevosFiltrados);
-    }catch(err){
-      console.log("Falla en radd.json", err);
-    }
-    */
-    try{
-      const json = await rendererProcess.getDataJsonElectron2("raddII.json")
+      const json = await rendererProcess.getDataJsonElectron("raddII.json")
       const data = JSON.parse(json)
       const sitiosNuevosFiltrados = detectedSiteNew(data);
       setSitioJson(sitiosNuevosFiltrados);
@@ -71,14 +39,10 @@ const Sitios = () => {
     try{
       const response = await axios.get(urlApi);
       const data = response.data
-      //setSitios(data);
       setSitiosApi(data);
-      //console.log(data)
-      //console.log(`Sitios API = ${sitiosApi.length} Sitios = ${sitios.length}`);
     }catch(err){
       console.log(err)
     }
-    //detectedSiteNew();
   }
 
   // Hace el primer llamado para cargar los datos
@@ -97,26 +61,11 @@ const Sitios = () => {
     setSitios([...sitiosJson, ...sitiosApi]);
   },[sitiosJson, sitiosApi])
 
-  // Averiguar donde estoy
-  // const requestHandleRutaDondeEstoy= async() => {
-  //   const urlApi = "https://djangonocv1.onrender.com/sitioRadII/" //Falta agregar el id 643 para pruebas
-  //   try{
-  //     const response = await axios.get(urlApi);
-  //     const data = response.data;
-  //     setSitios(data);
-  //     detectedSiteNew();
-  //   }catch(err){
-  //     console.log(err);
-  //   }
-  // }
+  
   const handleUpdateScraping= async() => {
-    //const rendererProcess = window.rendererProcess;
-    rendererProcess.encontrarRutas();
+    rendererProcess.actualizarTodoElSistema();
   }
 
-
-
-  
   // Carga la información del sitio en el modal
   const clickHandlerModal = (e, row) => {
     e.preventDefault();
@@ -124,40 +73,17 @@ const Sitios = () => {
     openModal();
   }
   
-  // useEffect(()=>{
-  //   getDataApi();
-  // },[])
-  // useEffect(()=>{
-  //   detectedSiteNew();
-  // },[sitios])
-
   //  Detección de sitios nuevos
   function detectedSiteNew(data){
-    console.log("Datos filtrados")
-    console.log(typeof(data))
-    console.log(data)
     if (data){
-      data.map((sitioTorre)=>{ 
-        if(sitioTorre.codigo_Tower_One === '-'){
-          return console.log("Sitios nuevos = ",sitioTorre.sitio)
-          //return sitioTorre.sitio
-        }else{
-          return console.log(sitio.codigo_Tower_One)
-          //return sitioTorre.codigo_Tower_One
-        }
-      }); 
-    }
-
-    const sitiosFiltrados = data.filter((sitioTorre)=>sitioTorre.codigo_Tower_One === '-'); 
-    if (sitiosFiltrados.length > 0){
-      setAlarmSite(true);
-      setSitiosNuevo(sitiosFiltrados);
-      return(sitiosFiltrados);
-      // setSitios(sitiosPrevios =>{
-      //   return [...sitiosPrevios, ...sitiosNuevo]
-      // })
-    }else{
-      setAlarmSite(false);
+      const sitiosFiltrados = data.filter((sitioTorre)=>sitioTorre.codigo_Tower_One === '-'); 
+      if (sitiosFiltrados.length > 0){
+        setAlarmSite(true);
+        setSitiosNuevo(sitiosFiltrados);
+        return(sitiosFiltrados);
+      }else{
+        setAlarmSite(false);
+      }
     }
   };
 

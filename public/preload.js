@@ -21,7 +21,7 @@ function cambioDeEstado(){
     //return arg;
   })
 }
-function encontrarRutas(){
+function actualizarTodoElSistema(){
   const mensajeReact = "Enviar señal de ping";
   ipcRenderer.send('ping', mensajeReact);
   ipcRenderer.on('pong', (event, arg)=>{
@@ -30,36 +30,16 @@ function encontrarRutas(){
   })
 }
 
-function getDataJsonElectron(nameFileJson){
+const getDataJsonElectron = async (nameFileJson) => {
   // raddII.json
-  ipcRenderer.send('getDataJson', nameFileJson);
-  const json = ipcRenderer.on('setDataJson', (event, arg)=>{
-    return arg
-  })
-  console.log("ARG ==== ", json)
-
-  return json;
-}
-
-
-const getDataJsonElectron2 = async (nameFileJson) => {
-  // raddII.json
-  const json = await ipcRenderer.invoke('getDataJson2', nameFileJson);
-  // console.log("JSON preload -->", json);
+  const json = await ipcRenderer.invoke('getDataJson', nameFileJson);
   return json
 }
 
-
-
-
-
 contextBridge.exposeInMainWorld('rendererProcess', {
-
   activateScrapingNode: activateScrapingNode,
   actualizarFront: actualizarFront,
   cambioDeEstado: cambioDeEstado,
-  encontrarRutas: encontrarRutas,
-  getDataJsonElectron: getDataJsonElectron,
-  getDataJsonElectron2: getDataJsonElectron2
-  // we can also expose variables, not just functions
+  actualizarTodoElSistema: actualizarTodoElSistema,
+  getDataJsonElectron: getDataJsonElectron
 })
