@@ -153,9 +153,15 @@ ipcMain.on('ping', (event, arg) => {
   ejecutarTodoScraping()
 });
 
+let jsonDirectories = ".//public//"
+isDev
+  ? jsonDirectories = ".//public//"
+  : jsonDirectories = path.join(__dirname, '..//..//01_Output//');
+
 ipcMain.handle('getDataJson', async  (event, arg) => {
   const leerArchivo = path => fs.readFileSync(path, 'utf8');
-  const data = leerArchivo("../"+arg);
+  const data = leerArchivo(jsonDirectories+arg);
+  console.log("__dirname", __dirname)
   const dataJson = JSON.parse(data);
   return dataJson
 });
