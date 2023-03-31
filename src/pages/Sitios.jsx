@@ -5,6 +5,8 @@ import DataTable from 'react-data-table-component';
 import { ModalEditSite } from '../components/ModalEditSite';
 import '../styles/Sitios.css';
 import axios from 'axios';
+const rendererProcess = window.rendererProcess;
+
 
 const Sitios = () => {
   const {postData} = useContext(AppContext);
@@ -14,6 +16,7 @@ const Sitios = () => {
   const [sitiosApi, setSitiosApi] = useState([]);       // Selecciona un solo sitio
   const [show, setShow] = useState(false);              // Control para mostrar el modal
   const [sitiosNuevo, setSitiosNuevo] = useState([]);   // Sitios nuevos
+  const [sitiosJsonNode, setSitiosJsonNode] = useState([]);   // Auxiliar leer datos desde NodeJS
   const [alarmSite, setAlarmSite] = useState(false)     // Controla si se debe mostrar mensaje por sitio nuevo
 
   const openModal = () => setShow(true);
@@ -21,6 +24,7 @@ const Sitios = () => {
 
   // Detectar sitios nuevos en JSON
   const getDataJson= async() => {
+    /*
     //const urlApi = "..//..//..//01_Output//raddII.json";  // Para leer archivos en producción
     const urlApi = "raddII.json";  //Para leer el archivo desde la carpeta public
     //console.log(await loadJsonFile('raddII.json'));
@@ -33,6 +37,29 @@ const Sitios = () => {
       setSitioJson(sitiosNuevosFiltrados);
       //detectedSiteNew(data);
       //console.log(`Sitios JSON = ${sitiosJson.length} Sitios = ${sitios.length}`);
+    }catch(err){
+      console.log("Falla en radd.json", err);
+    }
+    */
+   /*
+    try{
+      const json = rendererProcess.getDataJsonElectron("raddII.json");
+      console.log("JSON RENDER:- ", json)
+      // console.log("json ==", sitiosJsonNode)
+      // //const data = JSON.parse(json)
+      // console.log('SITIOS NODE')
+      // sitiosJsonNode.map(sitio => {console.log(sitio)})
+      // const sitiosNuevosFiltrados = detectedSiteNew(sitiosJsonNode);
+      // setSitioJson(sitiosNuevosFiltrados);
+    }catch(err){
+      console.log("Falla en radd.json", err);
+    }
+    */
+    try{
+      const json = await rendererProcess.getDataJsonElectron2("raddII.json")
+      const data = JSON.parse(json)
+      const sitiosNuevosFiltrados = detectedSiteNew(data);
+      setSitioJson(sitiosNuevosFiltrados);
     }catch(err){
       console.log("Falla en radd.json", err);
     }
@@ -61,6 +88,10 @@ const Sitios = () => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    getDataJson();
+  }, []);
+
 
   useEffect(()=>{
     setSitios([...sitiosJson, ...sitiosApi]);
@@ -79,7 +110,7 @@ const Sitios = () => {
   //   }
   // }
   const handleUpdateScraping= async() => {
-    const rendererProcess = window.rendererProcess;
+    //const rendererProcess = window.rendererProcess;
     rendererProcess.encontrarRutas();
   }
 
@@ -102,8 +133,9 @@ const Sitios = () => {
 
   //  Detección de sitios nuevos
   function detectedSiteNew(data){
-    console.log('')
     console.log("Datos filtrados")
+    console.log(typeof(data))
+    console.log(data)
     if (data){
       data.map((sitioTorre)=>{ 
         if(sitioTorre.codigo_Tower_One === '-'){

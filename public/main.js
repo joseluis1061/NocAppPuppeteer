@@ -154,11 +154,48 @@ ipcMain.on('ping', (event, arg) => {
   ejecutarTodoScraping()
 });
 
-ipcMain.on('getDataJsonApiSitios', (event, arg) => {
+ipcMain.on('getDataJson', (event, arg) => {
+  /*
+  console.log("getDataJson-->")
   console.log("..//..//"+arg);
-  //getJsonData.getJsonData("..//..//"+arg);
-
-  //event.sender.send('setDataJsonApiSitios', {});
+  const dataJson = getJsonData.getJsonData("..//"+arg, win);
+  console.log(dataJson)
+  */
+  //event.sender.send('setDataJson', dataJson);
   //mainWindow.webContents.send('setDataJsonApi', jsonData);
 
+  fs.readFile("../raddII.json", (err, data) => {
+    if (err) throw err;
+  
+    const jsonData = JSON.parse(data);
+    event.sender.send('setDataJson', jsonData);
+    //win.webContents.send('setDataJsonApi', jsonData);
+  });
+});
+
+ipcMain.handle('getDataJson2', async  (event, arg) => {
+  /*
+  let jsonData = {}
+  fs.readFile("../raddII.json", (err, data) => {
+    //if (err) throw err;
+    if (err) return console.log(err);
+    jsonData = JSON.parse(data);
+    console.log("////////////////////////////////")
+    console.log(jsonData)
+    return jsonData
+    console.log("////////////////////////////////")
+    //win.webContents.send('setDataJsonApi', jsonData);
+  });
+  console.log("***************************")
+  console.log(jsonData)
+  console.log("***************************")
+
+  return jsonData
+
+  */
+  const leerArchivo = path => fs.readFileSync(path, 'utf8');
+  const data = leerArchivo("../raddII.json");
+  const dataJson = JSON.parse(data);
+  console.log(dataJson)
+  return dataJson
 });

@@ -3,7 +3,6 @@ import AppContext from '../context/AppContext';
 import DataTable from 'react-data-table-component';
 import '../styles/Alarmas.css';
 import axios from 'axios';
-import data from '..//..//..//LogAlarmasRADII.json'
 
 const Alarmas = () => {
   const {postData} = useContext(AppContext);

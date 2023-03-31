@@ -26,14 +26,40 @@ function encontrarRutas(){
   ipcRenderer.send('ping', mensajeReact);
   ipcRenderer.on('pong', (event, arg)=>{
     console.log("Eventos recibidos desde NODEJS");
-    console.log(arg)
+    console.log(arg);
   })
 }
+
+function getDataJsonElectron(nameFileJson){
+  // raddII.json
+  ipcRenderer.send('getDataJson', nameFileJson);
+  const json = ipcRenderer.on('setDataJson', (event, arg)=>{
+    return arg
+  })
+  console.log("ARG ==== ", json)
+
+  return json;
+}
+
+
+const getDataJsonElectron2 = async (nameFileJson) => {
+  // raddII.json
+  const json = await ipcRenderer.invoke('getDataJson2', nameFileJson);
+  // console.log("JSON preload -->", json);
+  return json
+}
+
+
+
+
+
 contextBridge.exposeInMainWorld('rendererProcess', {
 
   activateScrapingNode: activateScrapingNode,
   actualizarFront: actualizarFront,
   cambioDeEstado: cambioDeEstado,
-  encontrarRutas: encontrarRutas
+  encontrarRutas: encontrarRutas,
+  getDataJsonElectron: getDataJsonElectron,
+  getDataJsonElectron2: getDataJsonElectron2
   // we can also expose variables, not just functions
 })
