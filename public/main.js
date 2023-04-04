@@ -74,14 +74,8 @@ isDev
   
 let dataPython = {}
 function filteredData() {
-  //const child = spawn('start',[__dirname+pathExecutableFiltered+'filterDataSite.exe'], 'with space', { shell: true })
-  //const child = spawn(`"${directory}\\${pathExecutableFiltered}"`, { shell: true });
-  //console.log(`Porque putas fallas "${directory}\\${pathExecutableFiltered}"`)
-  console.log(`Porque putas fallas "${pathExecutableFiltered}"`)
   const child = spawn(`"${pathExecutableFiltered}"`, { shell: true });
-  // // Los datos de salida se obtienen en un evento deseamos los datos data
   child.stdout.on('data', (data) => {
-    dataPython = data;
     console.log(`Stdout: ${data}`)
   })
   // Podemos obtener el error standar después de ejecutar el comando
@@ -102,6 +96,7 @@ function filteredData() {
   })
 }
 
+// Procesos cada 7 minutos
 cron.schedule("*/7 * * * *", () => {
   console.log('Every 7 min... ', new Date())
   async function ejecutarU2020(){
@@ -109,6 +104,7 @@ cron.schedule("*/7 * * * *", () => {
     filteredData();
     handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
   }
+  ejecutarU2020();
 });
 
 // 0 */1 * * * Cada 1 hora
@@ -119,74 +115,25 @@ cron.schedule("0 */1 * * *", () => {
     filteredData();
     handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
   }
+  ejecutarTowerOne();
 });
 
-
-// Rutina donde diablos estoy y que hay en el paquete
-/*************** */
-function uint8arrayToStringMethod(myUint8Arr){
-  // console.log("Recibe: ", myUint8Arr)
-  // console.log("Retorna: ", String.fromCharCode.apply(null, myUint8Arr))
-  return String.fromCharCode.apply(null, myUint8Arr);
-}
-
-/*************** */
-let dataPython2 = {}
+// Activar todo el proceso
 ipcMain.on('ping', (event, arg) => {
-  //console.log(arg);
-  const rutaActual = path.join(__dirname);
-  const file_list = fs.readdirSync(rutaActual);
-  const filasFilter = path.join(__dirname, "\\EjecutableFiltered\\dist\\");
-
-  let listFilter = [];
-  try{
-    listFilter = fs.readdirSync(filasFilter);
-  }catch{
-    console.log("Sin datos")
-  }
-
-
-  //let  rutaTotal = `"${directory}\\${pathExecutableFiltered}"`
-  let  rutaTotal = `"${pathExecutableFiltered}"`
-
-  /***************** */
-  console.log("DATAPYTHON ======== ")
-  console.log(dataPython)
-  console.log("DATAPYTHON -------> ")
-  dataPython2 = uint8arrayToStringMethod(dataPython)
-  /**************** */
-
-  event.sender.send('pong', {
-    "rutaActual": rutaActual,
-    "file_list": file_list,
-    "listFilter": listFilter,
-    "rutaTotal": rutaTotal,
-    "pathExecutableFiltered": pathExecutableFiltered, 
-    "listFilter": listFilter,
-    "dataPython2": dataPython2
-    // "aset": aset.length > 0 ? aset : "No file aset" 
-  })
-  //path.join(__dirname, './pathExecutableFiltered/filterDataSite.exe')
-  //console.log(__dirname, '\\pathExecutableFiltered\\filterDataSite.exe')
-  console.log("rutaTotal ", rutaTotal)
   async function ejecutarTodoScraping() {
-    //await U20220.scrapingU2020();
-    //await TowerOne.scrapingTowerOne();
+    await U20220.scrapingU2020();
+    await TowerOne.scrapingTowerOne();
     filteredData();
     handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
   }
   ejecutarTodoScraping()
-
 });
 
-
-
 /* Lectura y envio de archivos JSON** */
-let jsonDirectories = ".//public//"
+let jsonDirectories = ".//public//";
 isDev
   ? jsonDirectories = ".//public//"
   : jsonDirectories = path.join(__dirname, "..", "..", "\\01_Output\\");
-  
 
 ipcMain.handle('getDataJson', async  (event, arg) => {
   const leerArchivo = path => fs.readFileSync(path, 'utf8');
@@ -194,7 +141,3 @@ ipcMain.handle('getDataJson', async  (event, arg) => {
   const dataJson = JSON.parse(data);
   return dataJson;
 });
-
-
-
-

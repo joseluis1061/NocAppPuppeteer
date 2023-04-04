@@ -72,29 +72,11 @@
     "files": [
       "./dist/**/*",
       "./build/**/*",
-      "./public/**/*",
       "node_modules/**/*",
       "package.json"
     ],
     "directories": {
       "buildResources": "build"
-    },
-    "extraFiles": [
-      {
-        "from": "public/00_Inputs/",
-        "to": "public/00_Inputs/",
-        "filter": ["**/*"]
-      },
-      {
-        "from": "public/01_Output/",
-        "to": "public/01_Output/",
-        "filter": ["**/*"]
-      },
-      {
-        "from": "public/aset/",
-        "to": "public/aset/",
-        "filter": ["**/*"]
-      }
-    ]
+    }
   }
 }
