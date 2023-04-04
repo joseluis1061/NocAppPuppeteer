@@ -13,7 +13,7 @@ let win;
 let dirOutputsFilter = "";
 isDev
   ? dirOutputsFilter = path.join(__dirname, './/01_Output//')
-  : dirOutputsFilter = path.join(__dirname, '..//..//01_Output//');
+  : dirOutputsFilter = path.join(__dirname, '..', '..', '01_Output//');
 
 function createWindow() {
   // Create the browser window.
@@ -36,7 +36,7 @@ function createWindow() {
   );
   // Open the DevTools.
   if (isDev) {
-    win.webContents.openDevTools({ mode: 'detach' }); //{ mode: "undocked" }
+    win.webContents.openDevTools({ mode: 'right' }); //{ mode: "undocked" }
   }
   //Remove menu
   //Menu.setApplicationMenu(null);
@@ -46,7 +46,7 @@ app.whenReady().then(() =>{
   createWindow();
   win.maximize();
   win.show();
-  handleDirectories.createDirectotyOutput(dirOutputsFilter);
+  //handleDirectories.createDirectotyOutput(dirOutputsFilter);
 });
 
 app.on('window-all-closed', () => {
@@ -67,16 +67,21 @@ const { spawn } = require('child_process');
 
 /***** Filtered ********/
 let directory = __dirname;
-let executableFiltered = "";
+let pathExecutableFiltered = "";
 isDev
-  ? executableFiltered = "aset\\EjecutableFiltered\\dist\\filterDataSite.exe"
-  : executableFiltered = "\\EjecutableFiltered\\dist\\filterDataSite.exe"
-
+  ? pathExecutableFiltered = path.join(__dirname, "\\EjecutableFiltered\\dist\\filterDataSite.exe")
+  : pathExecutableFiltered = path.join(__dirname, "..", "..", "\\EjecutableFiltered\\dist\\filterDataSite.exe");
+  
+let dataPython = {}
 function filteredData() {
-  //const child = spawn('start',[__dirname+executableFiltered+'filterDataSite.exe'], 'with space', { shell: true })
-  const child = spawn(`"${directory}\\${executableFiltered}"`, { shell: true });
+  //const child = spawn('start',[__dirname+pathExecutableFiltered+'filterDataSite.exe'], 'with space', { shell: true })
+  //const child = spawn(`"${directory}\\${pathExecutableFiltered}"`, { shell: true });
+  //console.log(`Porque putas fallas "${directory}\\${pathExecutableFiltered}"`)
+  console.log(`Porque putas fallas "${pathExecutableFiltered}"`)
+  const child = spawn(`"${pathExecutableFiltered}"`, { shell: true });
   // // Los datos de salida se obtienen en un evento deseamos los datos data
   child.stdout.on('data', (data) => {
+    dataPython = data;
     console.log(`Stdout: ${data}`)
   })
   // Podemos obtener el error standar después de ejecutar el comando
@@ -118,50 +123,78 @@ cron.schedule("0 */1 * * *", () => {
 
 
 // Rutina donde diablos estoy y que hay en el paquete
+/*************** */
+function uint8arrayToStringMethod(myUint8Arr){
+  // console.log("Recibe: ", myUint8Arr)
+  // console.log("Retorna: ", String.fromCharCode.apply(null, myUint8Arr))
+  return String.fromCharCode.apply(null, myUint8Arr);
+}
+
+/*************** */
+let dataPython2 = {}
 ipcMain.on('ping', (event, arg) => {
   //console.log(arg);
   const rutaActual = path.join(__dirname);
   const file_list = fs.readdirSync(rutaActual);
+  const filasFilter = path.join(__dirname, "\\EjecutableFiltered\\dist\\");
 
-  const asetFile = fs.readdirSync(rutaActual).filter(file => {
-    return file.startsWith('aset');
-  });
-  // const aset = [];
-  // if(asetFile){
-  //   aset = fs.readdirSync(path.join(__dirname, '.', '\\aset\\'));
-  // }
-  // console.log(aset)
-  // console.log("file_list NODE ", file_list);
+  let listFilter = [];
+  try{
+    listFilter = fs.readdirSync(filasFilter);
+  }catch{
+    console.log("Sin datos")
+  }
 
-  let  rutaTotal = `"${directory}\\${executableFiltered}"`
+
+  //let  rutaTotal = `"${directory}\\${pathExecutableFiltered}"`
+  let  rutaTotal = `"${pathExecutableFiltered}"`
+
+  /***************** */
+  console.log("DATAPYTHON ======== ")
+  console.log(dataPython)
+  console.log("DATAPYTHON -------> ")
+  dataPython2 = uint8arrayToStringMethod(dataPython)
+  /**************** */
+
   event.sender.send('pong', {
     "rutaActual": rutaActual,
     "file_list": file_list,
+    "listFilter": listFilter,
     "rutaTotal": rutaTotal,
-    "executableFiltered": executableFiltered
+    "pathExecutableFiltered": pathExecutableFiltered, 
+    "listFilter": listFilter,
+    "dataPython2": dataPython2
     // "aset": aset.length > 0 ? aset : "No file aset" 
   })
-  //path.join(__dirname, './executableFiltered/filterDataSite.exe')
-  //console.log(__dirname, '\\executableFiltered\\filterDataSite.exe')
+  //path.join(__dirname, './pathExecutableFiltered/filterDataSite.exe')
+  //console.log(__dirname, '\\pathExecutableFiltered\\filterDataSite.exe')
   console.log("rutaTotal ", rutaTotal)
   async function ejecutarTodoScraping() {
-    await U20220.scrapingU2020();
-    await TowerOne.scrapingTowerOne();
+    //await U20220.scrapingU2020();
+    //await TowerOne.scrapingTowerOne();
     filteredData();
     handleDirectories.changeNameFile('AlarmasU2020_Tower', dirOutputsFilter);
   }
   ejecutarTodoScraping()
+
 });
 
+
+
+/* Lectura y envio de archivos JSON** */
 let jsonDirectories = ".//public//"
 isDev
   ? jsonDirectories = ".//public//"
-  : jsonDirectories = path.join(__dirname, '..//..//01_Output//');
+  : jsonDirectories = path.join(__dirname, "..", "..", "\\01_Output\\");
+  
 
 ipcMain.handle('getDataJson', async  (event, arg) => {
   const leerArchivo = path => fs.readFileSync(path, 'utf8');
   const data = leerArchivo(jsonDirectories+arg);
-  console.log("__dirname", __dirname)
   const dataJson = JSON.parse(data);
-  return dataJson
+  return dataJson;
 });
+
+
+
+
