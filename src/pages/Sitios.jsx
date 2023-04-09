@@ -21,12 +21,33 @@ const Sitios = () => {
   const openModal = () => setShow(true);
   const closeModal = () => setShow(false);
 
+  // Función para formatear la fecha
+  function formatDate(timestamp) {
+    const date = new Date(timestamp);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
   // Detectar sitios nuevos en JSON
   const getDataJson= async() => {
     try{
       const json = await rendererProcess.getDataJsonElectron("raddII.json");
       const data = JSON.parse(json);
-      const sitiosNuevosFiltrados = detectedSiteNew(data);
+
+      // Cambiar la fecha de formato timestamp a time
+      const updatedObjectsArray = data.map(obj => {
+        // Si la clave 'date' es un timestamp, la actualizamos
+        if (typeof obj.fecha_integracion_RADII === 'number' && obj.fecha_integracion_RADII.toString().length === 13) {
+          return Object.assign({}, obj, { fecha_integracion_RADII: formatDate(obj.fecha_integracion_RADII)});
+        }
+        // Si no, devolvemos el objeto original sin cambios 
+        return obj;
+      });
+
+      // Detectar sitios nuevos
+      const sitiosNuevosFiltrados = detectedSiteNew(updatedObjectsArray);
       setSitioJson(sitiosNuevosFiltrados);
     }catch(err){
       console.log("Falla en radd.json", err);
@@ -38,14 +59,25 @@ const Sitios = () => {
     const urlApi = "https://djangonocv1.onrender.com/sitiosRadd/"
     try{
       const response = await axios.get(urlApi);
-      const data = response.data
-      setSitiosApi(data);
+      const data = response.data;
+
+      // Cambiar la fecha de formato timestamp a time
+      const updatedObjectsArray = data.map(obj => {
+        // Si la clave 'date' es un timestamp, la actualizamos
+        if (typeof obj.fecha_integracion_RADII === 'number' && obj.fecha_integracion_RADII.toString().length === 13) {
+          return Object.assign({}, obj, { fecha_integracion_RADII: formatDate(obj.fecha_integracion_RADII)});
+        }
+        // Si no, devolvemos el objeto original sin cambios 
+        return obj;
+      });
+
+      setSitiosApi(updatedObjectsArray);
     }catch(err){
       console.log(err)
     }
   }
 
-  // Hace el primer llamado para cargar los datos
+  // Iniciar la actualización de datos cada minuto
   useEffect(() => {
     const interval = setInterval(() => getDataJson(), 60000);
     getDataApi();
@@ -56,7 +88,7 @@ const Sitios = () => {
     getDataJson();
   }, []);
 
-
+  // Actualizar los datos si se detectan sitios nuevos
   useEffect(()=>{
     setSitios([...sitiosJson, ...sitiosApi]);
   },[sitiosJson, sitiosApi])

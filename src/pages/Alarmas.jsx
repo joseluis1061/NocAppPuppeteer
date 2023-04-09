@@ -12,13 +12,39 @@ const Alarmas = () => {
   const [jsonTable, setJsonTable] = useState([]);
   const [alarmas, setAlarmas] = useState([]);
 
+  // Función para formatear la fecha
+  function formatDate(timestamp) {
+    const date = new Date(timestamp);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
  
   // Actualizar la tablero con JSON
   const getDataJson= async() => {
     try{
       const json = await rendererProcess.getDataJsonElectron("LogAlarmasRADII.json");
       const data = JSON.parse(json);
-      setAlarmas(data);
+
+      // Array con los nombres de las claves a actualizar
+      const keysToUpdate = ['fecha_integracion_RADII', 'final', 'inicio'];
+
+      // Array con objetos actualizados
+      const updatedObjectsArray = data.map(obj => {
+        const newObj = Object.assign({}, obj);
+        // Recorremos las claves a actualizar del objeto
+        for (const key of keysToUpdate) {
+          // Si la clave es una fecha en formato timestamp, la actualizamos
+          if (newObj.hasOwnProperty(key) && typeof newObj[key] === 'number' && newObj[key].toString().length === 13) {
+            newObj[key] = formatDate(newObj[key]);
+          }
+        }
+        return newObj;
+      });
+
+      setAlarmas(updatedObjectsArray);
     }catch(err){
       console.log("Falla en radd.json", err);
     }

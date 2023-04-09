@@ -167,6 +167,15 @@ const columnas = [
 const Analisis = () => {
   const [analisis, setAnalisis] = useState([]);
 
+  // Función para formatear la fecha
+  function formatDate(timestamp) {
+    const date = new Date(timestamp);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
   // Actualizar la tablero con JSON
   const getDataJson= async() => {
     /*
@@ -188,7 +197,18 @@ const Analisis = () => {
     try{
       const json = await rendererProcess.getDataJsonElectron("AnalisisAlarmas.json");
       const data = JSON.parse(json);
-      setAnalisis(data);
+
+      // Cambiar la fecha de formato timestamp a time
+      const updatedObjectsArray = data.map(obj => {
+        // Si la clave 'date' es un timestamp, la actualizamos
+        if (typeof obj.fecha_integración_RADII === 'number' && obj.fecha_integración_RADII.toString().length === 13) {
+          return Object.assign({}, obj, { fecha_integración_RADII: formatDate(obj.fecha_integración_RADII)});
+        }
+        // Si no, devolvemos el objeto original sin cambios 
+        return obj;
+      });
+
+      setAnalisis(updatedObjectsArray);
     }catch(err){
       console.log("Falla en radd.json", err);
     }
