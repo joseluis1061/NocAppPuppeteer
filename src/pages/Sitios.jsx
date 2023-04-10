@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useMemo } from 'react';
 import AppContext from '../context/AppContext';
 import DataTable from 'react-data-table-component';
 import { ModalEditSite } from '../components/ModalEditSite';
@@ -17,6 +17,7 @@ const Sitios = () => {
   const [sitiosNuevo, setSitiosNuevo] = useState([]);   // Sitios nuevos
   const [sitiosJsonNode, setSitiosJsonNode] = useState([]);   // Auxiliar leer datos desde NodeJS
   const [alarmSite, setAlarmSite] = useState(false)     // Controla si se debe mostrar mensaje por sitio nuevo
+  const [pending, setPending] = React.useState(true);   // Carga pendiente de datos
 
   const openModal = () => setShow(true);
   const closeModal = () => setShow(false);
@@ -49,6 +50,7 @@ const Sitios = () => {
       // Detectar sitios nuevos
       const sitiosNuevosFiltrados = detectedSiteNew(updatedObjectsArray);
       setSitioJson(sitiosNuevosFiltrados);
+      setPending(false);
     }catch(err){
       console.log("Falla en radd.json", err);
     }
@@ -72,6 +74,7 @@ const Sitios = () => {
       });
 
       setSitiosApi(updatedObjectsArray);
+      setPending(false);
     }catch(err){
       console.log(err)
     }
@@ -118,7 +121,9 @@ const Sitios = () => {
       }
     }
   };
-
+  
+  // Descargar CSV
+  //const actionsMemo = console.log("Download") //React.useMemo(() => <Export onExport={() => downloadCSV(data)} />, []);
   // Columnas para pintar similar a un excel
   const columnas = [     
     {
@@ -265,7 +270,7 @@ const Sitios = () => {
   const dobleClickUpdateHandler = (row, event) => { clickHandlerModal(event, row); };
   return (
     <section className='Sitios'>
-      <h2>Sitios RADII</h2>
+      {/* <h2>Sitios RADII</h2> */}
 
       {alarmSite? <div className='newSiteDetected'>
         <i className="fa-solid fa-triangle-exclamation"></i>
@@ -282,6 +287,7 @@ const Sitios = () => {
       />
 
       <DataTable
+        title="Sitios Radd II"
         columns = {columnas}
         data = {sitios}
         responsive = {true}
@@ -294,8 +300,15 @@ const Sitios = () => {
         onRowDoubleClicked = {dobleClickUpdateHandler}
         selectableRows = {true}
         selectableRowsHighlight = {true}
+        progressPending={pending}
         search
+        dense
+        
+        //actions={actionsMemo}               // Descargar archivo
+        // fixedHeader                      //Scroll en la ventana
+        // fixedHeaderScrollHeight="300px"
       />
+      
       <nav className='sitios-menu'>
         <div className='campo-download'>          
 

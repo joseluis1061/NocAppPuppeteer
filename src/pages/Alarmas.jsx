@@ -213,11 +213,12 @@ const Alarmas = () => {
   ]
   return (
     <section className='Alarmas'>
-      <h2>Log de Alarmas U2020</h2>
+      {/* <h2>Log de Alarmas U2020</h2> */}
       {
         fileName && <p>{fileName}</p> 
       }
       <DataTable
+        title="Log de Alarmas U2020"
         columns = {columnas}
         data = {alarmas}
         responsive = {true}

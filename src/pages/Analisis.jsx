@@ -226,8 +226,9 @@ const Analisis = () => {
 
   return (
     <section className='Analisis'>
-      <h2>Análisis Alarmas</h2> 
+      {/* <h2>Análisis Alarmas</h2>  */}
       <DataTable
+        title="Análisis Alarmas"
         columns = {columnas}
         data = {analisis}
         responsive = {true}
