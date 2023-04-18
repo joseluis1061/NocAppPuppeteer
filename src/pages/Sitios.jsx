@@ -110,6 +110,18 @@ const Sitios = () => {
   
   //  Detección de sitios nuevos
   function detectedSiteNew(data){
+    // if (data && sitios){
+    // Eliminar para evitar el re render
+    //   const sitiosFiltrados = data.filter((sitioTorre)=> (sitioTorre.codigo_Tower_One === '-' )); 
+    //   if (sitiosFiltrados.length > 0){
+    //     setAlarmSite(true);
+    //     setSitiosNuevo(sitiosFiltrados);
+    //     return(sitiosFiltrados);
+    //   }else{
+    //     setAlarmSite(false);
+    //   }
+    // }
+    console.log(sitios)
     if (data){
       const sitiosFiltrados = data.filter((sitioTorre)=>sitioTorre.codigo_Tower_One === '-'); 
       if (sitiosFiltrados.length > 0){
