@@ -7,8 +7,10 @@ const handleDirectories = require('./handleDirectories');
 //const puppeteerCore = require('puppeteer-core');
 const URL2020 = "https://10.28.144.135:31943/unisso/login.action?service=%2Funisess%2Fv1%2Fauth%3Fservice%3D%252Fossfacewebsite%252Findex.html%2523Access%252FfmAlarmView&decision=1";
 const alarmLog = "https://10.28.144.135:31943/ossfacewebsite/index.html#Access/fmAlarmLog";
-const USERU2020 = "dchocuec";
-const CONTRASENIAU2020 = "IOTlatamPop2023**";
+const USERU2020 = "ppradopr";
+const CONTRASENIAU2020 = "LATam2023**COL";
+// const USERU2020 = "dchocuec";
+// const CONTRASENIAU2020 = "IOTlatamPop2023**";
 
 let dirDownload = "";
 isDev
