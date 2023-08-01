@@ -29,13 +29,19 @@ function createWindow() {
 
   });
 
+  // win.loadURL(
+  //   isDev
+  //   ?url.format({
+  //     pathname: path.join(__dirname, 'index.html')
+  //   })
+  //   : `file://${path.join(__dirname, '../build/index.html')}`
+   
+  // );
+
   win.loadURL(
     isDev
-    ?url.format({
-      pathname: path.join(__dirname, 'index.html')
-    })
-    : `file://${path.join(__dirname, '../build/index.html')}`
-   
+      ? 'http://localhost:3000/'
+      : `file://${path.join(__dirname, '../build/index.html')}`
   );
   // Open the DevTools.
   if (isDev) {

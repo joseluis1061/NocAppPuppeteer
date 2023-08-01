@@ -133,7 +133,8 @@ const scrapingU2020 = async () => {
 
   // Abre el menu de filtros
   try{
-    const filterXpath = '/html/body/div[2]/div/div/div[1]/div/div[2]/span[1]';
+    //const filterXpath = '/html/body/div[2]/div/div/div[1]/div/div[2]/span[1]';
+    const filterXpath = '//*[@id="smartQueryFilterTitle"]';
     const filter = await frameAlarmas.waitForSelector('xpath/' + filterXpath, {visible: true});
     await filter.click();
   }catch{
